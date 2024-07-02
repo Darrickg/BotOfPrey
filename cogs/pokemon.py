@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import aiohttp
 import json
+import io
 
 class Pokemon(commands.Cog):
     # initialise by getting api link from config
@@ -37,10 +38,36 @@ class Pokemon(commands.Cog):
                         f"**{type_label}:** {', '.join(types)}"
                     )
                     
-                    # send message
-                    await ctx.send(pokemon_info)
+                    # get image for pokemon
+                    sprite_url = data['sprites']['front_default']
+
+                    # if exists, get from api
+                    if sprite_url:
+                        async with session.get(sprite_url) as sprite_resp:
+                            if sprite_resp.status == 200:
+                                sprite_data = await sprite_resp.read()
+
+                                # define image file name
+                                filename = f"{data['name'].title()}.png"
+
+                                # add image to message
+                                image = discord.File(io.BytesIO(sprite_data), filename=filename)
+
+                                # make the message an embed
+                                embed = discord.Embed(description=pokemon_info)
+                                embed.set_image(url=f"attachment://{filename}")
+
+                                # send
+                                await ctx.send(file=image, embed=embed)
+                            else:
+                                # otherwise, just send the message
+                                await ctx.send(pokemon_info)
+                    else:
+                        # otherwise, just send the message (part 2)
+                        await ctx.send(pokemon_info)
                 else:
-                    await ctx.send("Pokemon not found!")
+                    # no pokemon found
+                    await ctx.send("Pokémon not found!")
 
 # wait for main to call
 async def setup(bot):
