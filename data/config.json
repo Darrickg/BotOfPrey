@@ -1,3 +1,4 @@
 {
-    "pokemon_api_url": "https://pokeapi.co/api/v2/"
+    "pokemon_api_url": "https://pokeapi.co/api/v2/",
+    "bored_api_url": "https://www.boredapi.com/api"
 }

@@ -21,7 +21,7 @@ async def on_ready():
 
 # load cogs
 async def load_extensions():
-    cogs = ['cogs.pokemon']
+    cogs = ['cogs.pokemon', 'cogs.bored']
     for cog in cogs:
         try:
             await bot.load_extension(cog)
